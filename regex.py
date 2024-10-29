@@ -35,19 +35,3 @@ def regex(expression, input_string):
 
 
     return matched_substrings
-
-
-exp = input('enter expression: ')
-
-while True:
-    string = input('enter string: ')
-    print(regex(exp, string))
-'''
-
-comp = component('a', 'string', (1,1))
-
-while True:
-    substr = input("enter substr: ")
-    print(comp.verify(substr))
-
-'''
