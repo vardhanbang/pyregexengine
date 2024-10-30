@@ -1,7 +1,10 @@
 from regex import regex
+from split_components import split_components
 
-exp = input('enter expression: ')
+#exp = input('enter expression: ')
 
 while True:
-    string = input('enter string: ')
-    print(regex(exp, string))
+    exp = input('enter expression: ')
+    comps = split_components(exp)
+    for comp in comps:
+        print(comp)
