@@ -1,4 +1,5 @@
 from split_components import split_components
+from component import component
 
 def regex(expression, input_string):
 
@@ -33,5 +34,5 @@ def regex(expression, input_string):
             matched_substrings.append((substring_start, substring_end))
             substring_start = substring_end
 
-
+    #print(matched_substrings)
     return matched_substrings

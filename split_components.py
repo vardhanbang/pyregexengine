@@ -1,11 +1,12 @@
 from component import component
 
-lowercase_alphabet = 'abcdefghijklmnopqrstuvwxyz'
-uppercase_alphabet = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ'
-digits = '0123456789'
-special_characters = '!@#$%&'
-all_characters = lowercase_alphabet + uppercase_alphabet + digits + special_characters
-special = ['.', '*', '+', '?' , '|', '[', ']', '^', '{', '}']
+lowercase_alphabet = ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l', 'm', 'n', 'o', 'p', 'q', 'r', 's', 't', 'u', 'v', 'w', 'x', 'y', 'z']
+uppercase_alphabet = ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z']
+digits = ['0', '1', '2', '3', '4', '5', '6', '7', '8', '9']
+special = ['!', '"', '#', '$', '%', '&', "'", '(', ')', '*', '+', ',', '-', '.', '/',  ':', ';', '<', '=', '>', '?', '@', '[', '\\', ']', '^', '_', '`', '{', '|',  '}', '~']
+syntax = ['[', ']', '(', ')', '{', '}', '*', '?', '+']
+non_syntax = ['!', '"', '#', '$', '%', '&', "'", ',', '-', '/', ':', ';', '<', '=',  '>', '@', '\\', '^', '_', '`', '|', '~']
+all_characters = lowercase_alphabet + uppercase_alphabet + digits + non_syntax
 
 def split_components(expression):
 
@@ -44,9 +45,18 @@ def split_components(expression):
                 else:
                     temp_repeat_range += temp_char
             temp_repeat_range = temp_repeat_range[::-1]
-            print(temp_repeat_range)
             temp_index = temp_repeat_range.find(',')
-            temp_repeat_range = (int(temp_repeat_range[:temp_index]), int(temp_repeat_range[temp_index+1:]))
+            repeat_min = temp_repeat_range[:temp_index]
+            repeat_max = temp_repeat_range[temp_index+1:]
+            if not repeat_min:
+                repeat_min = 0
+            else:
+                repeat_min = int(repeat_min)
+            if not repeat_max:
+                repeat_max = 10000
+            else:
+                repeat_max = int(repeat_max)
+            temp_repeat_range = (repeat_min, repeat_max)
         else:
             temp_operator = 'string'
             temp_repeat_range = operator_repeat_ranges[temp_operator]
@@ -55,13 +65,25 @@ def split_components(expression):
         if temp_operator in '*+?custom':
             current_index += 1
             temp_char = reversed_expression[current_index]
-            temp_expression = temp_char
+            temp_expression += temp_char
+            if temp_char == ']':
+                while temp_char != '[':
+                    current_index += 1
+                    temp_char = reversed_expression[current_index]
+                    temp_expression += temp_char
             current_index += 1
         else:
+            temp_expression += temp_char
             if temp_char == '.':
-                temp_expression = temp_char
+                current_index += 1
+            elif temp_char == ']':
+                while temp_char != '[':
+                     current_index += 1
+                     temp_char = reversed_expression[current_index]
+                     temp_expression += temp_char
                 current_index += 1
             else:
+                current_index += 1
                 while current_index < len(reversed_expression):
                     temp_char = reversed_expression[current_index]
                     if temp_char in all_characters:
@@ -69,6 +91,8 @@ def split_components(expression):
                         current_index += 1
                     else:
                         break
+                    
+                    
 
         temp_expression = temp_expression[::-1]
         #print(temp_expression, temp_operator, temp_repeat_range)
