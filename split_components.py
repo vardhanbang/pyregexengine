@@ -5,49 +5,55 @@ uppercase_alphabet = ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L'
 digits = ['0', '1', '2', '3', '4', '5', '6', '7', '8', '9']
 special = ['!', '"', '#', '$', '%', '&', "'", '(', ')', '*', '+', ',', '-', '.', '/',  ':', ';', '<', '=', '>', '?', '@', '[', '\\', ']', '^', '_', '`', '{', '|',  '}', '~']
 syntax = ['[', ']', '(', ')', '{', '}', '*', '?', '+']
+operators = ['*', '+', '?']
 non_syntax = ['!', '"', '#', '$', '%', '&', "'", ',', '-', '/', ':', ';', '<', '=',  '>', '@', '\\', '^', '_', '`', '|', '~']
 all_characters = lowercase_alphabet + uppercase_alphabet + digits + non_syntax
-
-def split_components(expression):
-
-    operator_repeat_ranges = {
+operator_repeat_ranges = {
         '*': (0, 10000),
         '+': (1, 10000),
         '?': (0, 1),
-        'string': (1, 1)
+        'single': (1, 1)
     }
 
-    component_array = []
-    temp_char = ''
-    temp_expression = ''
-    temp_operator = ''
-    temp_repeat_range = ''
-    current_index = 0
-    reversed_expression = expression[::-1]
+def split_components(expr):
+    comp_array = []
+    char_list = list(expr)
+    i = 0
+    while i < len(char_list):
+        if char_list[i] == '\\':
+            if char_list[i+1] != '\\':
+                char_list[i] += char_list[i+1]
+            char_list.pop(i+1)
+        i+=1
+    
+    rev_char_list = char_list[::-1]
+    index = 0
 
+    while index < len(rev_char_list):
+        operator = ''
+        repeat_range = ''
+        expression = ''
+        character = rev_char_list[index]
 
+        if character in operators:
+            operator = character
+            repeat_range = operator_repeat_ranges[operator]
+            index += 1
 
-    while current_index < len(reversed_expression):
+        elif character == '}':
+            operator = 'custom'
 
-        temp_char = reversed_expression[current_index]
-
-        #find operator and set repeat range
-        if temp_char in '*+?':
-            temp_operator = temp_char
-            temp_repeat_range = operator_repeat_ranges[temp_operator]
-        elif temp_char == '}':
-            temp_operator = 'custom'
             while True:
-                current_index += 1
-                temp_char = reversed_expression[current_index]
-                if temp_char == '{':
+                index += 1
+                character = rev_char_list[index]
+                if character == '{':
                     break
                 else:
-                    temp_repeat_range += temp_char
-            temp_repeat_range = temp_repeat_range[::-1]
-            temp_index = temp_repeat_range.find(',')
-            repeat_min = temp_repeat_range[:temp_index]
-            repeat_max = temp_repeat_range[temp_index+1:]
+                    repeat_range += character
+            repeat_range = repeat_range[::-1]
+            temp_index = repeat_range.find(',')
+            repeat_min = repeat_range[:temp_index]
+            repeat_max = repeat_range[temp_index+1:]
             if not repeat_min:
                 repeat_min = 0
             else:
@@ -56,48 +62,28 @@ def split_components(expression):
                 repeat_max = 10000
             else:
                 repeat_max = int(repeat_max)
-            temp_repeat_range = (repeat_min, repeat_max)
+            repeat_range = (repeat_min, repeat_max)
+            index += 1
+
         else:
-            temp_operator = 'string'
-            temp_repeat_range = operator_repeat_ranges[temp_operator]
+            operator = 'single'
+            repeat_range = operator_repeat_ranges[operator]
 
-        #set expression for current operator
-        if temp_operator in '*+?custom':
-            current_index += 1
-            temp_char = reversed_expression[current_index]
-            temp_expression += temp_char
-            if temp_char == ']':
-                while temp_char != '[':
-                    current_index += 1
-                    temp_char = reversed_expression[current_index]
-                    temp_expression += temp_char
-            current_index += 1
+        character = rev_char_list[index]
+
+        if character == ']':
+            expression += character
+            while character != '[':
+                index += 1
+                character = rev_char_list[index]
+                expression += character
+            expression = expression[::-1]
+            index += 1
         else:
-            temp_expression += temp_char
-            if temp_char == '.':
-                current_index += 1
-            elif temp_char == ']':
-                while temp_char != '[':
-                     current_index += 1
-                     temp_char = reversed_expression[current_index]
-                     temp_expression += temp_char
-                current_index += 1
-            else:
-                current_index += 1
-                while current_index < len(reversed_expression):
-                    temp_char = reversed_expression[current_index]
-                    if temp_char in all_characters:
-                        temp_expression += temp_char
-                        current_index += 1
-                    else:
-                        break
-                    
-                    
+            expression = character
+            index += 1
 
-        temp_expression = temp_expression[::-1]
-        #print(temp_expression, temp_operator, temp_repeat_range)
-        component_array.append(component(temp_expression, temp_operator, temp_repeat_range))
-        temp_expression = ''
-        temp_repeat_range = ''
+        comp_array.append(component(expression, operator, repeat_range))
 
-    return component_array[::-1]
+    comp_array = comp_array[::-1]
+    return comp_array

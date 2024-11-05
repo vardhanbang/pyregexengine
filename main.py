@@ -1,5 +1,6 @@
 from regex import regex
 from split_components import split_components
+from temp import split
 
 '''
 while True:
@@ -22,10 +23,13 @@ comp = component('[@#b-fC-D5-8]', 'custom', (5,19))
 print(comp)
 print(comp.compare_list)
 '''
+
 expr = input('enter expression: ')
-comps = split_components(expr)
+comps = split(expr)
 for comp in comps:
     print(comp)
+
+
 while True:
     temp = input('enter text: ')
     print(regex(expr, temp))
