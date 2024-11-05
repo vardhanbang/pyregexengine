@@ -32,3 +32,13 @@ for comp in comps:
 while True:
     temp = input('enter text: ')
     print(regex(expr, temp))
+
+
+'''
+
+comp = split_components('a*')[0]
+print(comp)
+comp.incr_r()
+print(comp)
+
+'''

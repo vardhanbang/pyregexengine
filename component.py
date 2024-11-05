@@ -43,13 +43,25 @@ class component:
             self.compare_list = [self.expression[-1]]
 
     def __str__(self):
-        return f"expression: {self.expression}\ncomponent type: {self.operator}\nrepeat_range: {self.repeat_range}\ncompare_list: {self.compare_list}\n"
+        return f"expression: {self.expression}\ncomponent type: {self.operator}\nrepeat_range: {self.repeat_range}\nrepeat_num {self.repeat_num}\ncompare_list: {self.compare_list}\n"
 
     def verify(self, text):
         if self.expression == '.':
             return len(text) == self.repeat_num
+        elif self.expression[0] == '[':
+            if len(text) != self.repeat_num:
+                return False
+            else:
+                for character in text:
+                    if character not in self.compare_list:
+                        return False
+                    
+            return True
         else:
             for temp_text in self.compare_list:
                 if temp_text*self.repeat_num == text:
                     return True
         return False
+
+    def incr_r(self):
+        self.repeat_num += 1
