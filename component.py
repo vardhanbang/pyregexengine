@@ -10,6 +10,7 @@ class component:
         self.expression = expression
         self.repeat_range = repeat_range
         self.operator = operator
+        self.repeat_num = self.repeat_range[0]
         self.compare_list = []
 
         if self.expression[0] == '[':
@@ -27,34 +28,19 @@ class component:
                     if temp_slice[0] in digits:
                         self.compare_list += digits[digits.index(temp_slice[0]):digits.index(temp_slice[2])+1]
         elif self.expression == '.':
+            self.compare_list = ['.']
             pass
         else:
             self.compare_list = [self.expression]
 
-
     def __str__(self):
-        return f"\nexpression: {self.expression}\ncomponent type: {self.operator}\nrepeat_range: {self.repeat_range}\ncompare_list: {self.compare_list}\n"
+        return f"expression: {self.expression}\ncomponent type: {self.operator}\nrepeat_range: {self.repeat_range}\ncompare_list: {self.compare_list}\n"
 
-    def verify(self, substring):
-
-        component_matched = False
-        slice_end = 0
-
+    def verify(self, text):
         if self.expression == '.':
-            if len(substring) >= self.repeat_range[0]:
-                component_matched = True
-                if len(substring) > self.repeat_range[1]:
-                    slice_end = self.repeat_range[1]
-                else:
-                    slice_end = len(substring)
+            return len(text) == self.repeat_num
         else:
-            for repeat_value in range(self.repeat_range[0], self.repeat_range[1] + 1):
-                temp_compare_list = [compare_string*repeat_value for compare_string in self.compare_list]
-                slice_end = len(temp_compare_list[0])
-                if substring[:slice_end] in temp_compare_list:
-                    component_matched = True
-                else:
-                    slice_end -= len(self.compare_list[0])
-                    break
-            
-        return component_matched, slice_end
+            for temp_text in self.compare_list:
+                if temp_text*self.repeat_num == text:
+                    return True
+        return False

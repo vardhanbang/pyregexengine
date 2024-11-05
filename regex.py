@@ -1,38 +1,46 @@
 from split_components import split_components
-from component import component
+
+def minimal_regex(expression, text):
+    comp_array = split_components(expression)
+    comp_index = 0
+    slice_start = 0
+
+    while True:
+        if comp_index == len(comp_array):
+            return True
+        if slice_start >= len(text) and len(text) > 0:
+            #print('1')
+            return False
+        if comp_array[comp_index].repeat_num > comp_array[comp_index].repeat_range[1]:
+            #print('2')
+            return False
+        
+        expr_length = len(comp_array[comp_index].compare_list[0])
+        slice_length = expr_length*comp_array[comp_index].repeat_num
+
+        if slice_length > len(text[slice_start:]):
+            #print('3')
+            return False
+
+        if comp_array[comp_index].verify(text[slice_start:slice_start+slice_length]):
+            #print(f'success {comp_array[comp_index].expression}*{comp_array[comp_index].repeat_num}')
+            slice_start += slice_length
+            comp_index += 1
+        else:
+            #print(f'fail {comp_array[comp_index].expression}*{comp_array[comp_index].repeat_num}')
+            comp_index = max([0, comp_index - 1])
+            slice_start = max([0, slice_start - comp_array[comp_index].repeat_num*len(comp_array[comp_index].compare_list[0])])
+            comp_array[comp_index].repeat_num += 1
 
 def regex(expression, input_string):
-
-    component_array = split_components(expression)
-    matched_substrings = []
-    substring_start = 0
-    substring_end = 0
-
-    while substring_start < len(input_string):
-
-        matched_components = []
-        slice_start = 0
-        slice_end = 0
-
-        substring = input_string[substring_start:]
-        substring_matched = True
-
-        for component in component_array:
-            component_matched, slice_end = component.verify(substring[slice_start:])
-            if not component_matched:
-                substring_matched = False
-                break
-            else:
-                slice_end += slice_start
-                matched_components.append((slice_start, slice_end))
-                slice_start = slice_end
+    comp_array = split_components(expression)
+    min_slice = 0
+    for comp in comp_array:
+        min_slice += comp.repeat_num*len(comp.compare_list[0])
+    #print(f'min_slice: {min_slice}')
+    for i in range(0, len(input_string)-min_slice+1):
+        #print(f'slice: {input_string[i:i+min_slice]}')
+        if minimal_regex(expression, input_string[i:i+min_slice]):
+            return True
         
-        if not substring_matched:
-            substring_start += 1
-        else:
-            substring_end = matched_components[-1][1] + substring_start
-            matched_substrings.append((substring_start, substring_end))
-            substring_start = substring_end
-
-    #print(matched_substrings)
-    return matched_substrings
+    return False
