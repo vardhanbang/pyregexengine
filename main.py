@@ -1,6 +1,5 @@
 from regex import regex
 from split_components import split_components
-from temp import split
 
 '''
 while True:
@@ -25,7 +24,7 @@ print(comp.compare_list)
 '''
 
 expr = input('enter expression: ')
-comps = split(expr)
+comps = split_components(expr)
 for comp in comps:
     print(comp)
 
