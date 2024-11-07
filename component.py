@@ -3,6 +3,7 @@ uppercase_alphabet = ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L'
 digits = ['0', '1', '2', '3', '4', '5', '6', '7', '8', '9']
 special = ['!', '"', '#', '$', '%', '&', "'", '(', ')', '*', '+', ',', '-', '.', '/',  ':', ';', '<', '=', '>', '?', '@', '[', '\\', ']', '^', '_', '`', '{', '|',  '}', '~']
 all = lowercase_alphabet + uppercase_alphabet + digits + special
+text = lowercase_alphabet + uppercase_alphabet + digits
 
 class component:
 
@@ -23,15 +24,20 @@ class component:
                 if '-' not in temp_expr[i-1:i+2]:
                     self.compare_list.append(temp_expr[i])
             expr = temp_expr[1:-1]
-            for i in range(0, len(expr) - 2):
-                temp_slice = expr[i:i+3]
-                if temp_slice[1] == '-':
-                    if temp_slice[0] in lowercase_alphabet:
-                        self.compare_list += lowercase_alphabet[lowercase_alphabet.index(temp_slice[0]):lowercase_alphabet.index(temp_slice[2])+1]
-                    if temp_slice[0] in uppercase_alphabet:
-                        self.compare_list += uppercase_alphabet[uppercase_alphabet.index(temp_slice[0]):uppercase_alphabet.index(temp_slice[2])+1]
-                    if temp_slice[0] in digits:
-                        self.compare_list += digits[digits.index(temp_slice[0]):digits.index(temp_slice[2])+1]
+            if len(expr) < 3:
+                self.compare_list += list(expr)
+            else:
+                for i in range(0, len(expr) - 2):
+                    temp_slice = expr[i:i+3]
+                    if temp_slice[1] == '-':
+                        if (temp_slice[0] not in text) and (temp_slice[2] not in text):
+                            self.compare_list += list(temp_slice)
+                        elif temp_slice[0] in lowercase_alphabet:
+                            self.compare_list += lowercase_alphabet[lowercase_alphabet.index(temp_slice[0]):lowercase_alphabet.index(temp_slice[2])+1]
+                        elif temp_slice[0] in uppercase_alphabet:
+                            self.compare_list += uppercase_alphabet[uppercase_alphabet.index(temp_slice[0]):uppercase_alphabet.index(temp_slice[2])+1]
+                        elif temp_slice[0] in digits:
+                            self.compare_list += digits[digits.index(temp_slice[0]):digits.index(temp_slice[2])+1]
             if invert:
                 temp_list = self.compare_list
                 self.compare_list = [i for i in all if i not in temp_list]
