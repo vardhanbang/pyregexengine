@@ -49,7 +49,7 @@ class component:
             self.compare_list = [self.expression[-1]]
 
     def __str__(self):
-        return f"expression: {self.expression}\ncomponent type: {self.operator}\nrepeat_range: {self.repeat_range}\nrepeat_num {self.repeat_num}\ncompare_list: {self.compare_list}\n"
+        return f"expression: {self.expression}\ncomponent type: {self.operator}\nrepeat_range: {self.repeat_range}\nrepeat_num: {self.repeat_num}\ncompare_list: {self.compare_list}\n"
 
     def verify(self, text):
         if self.expression == '^':

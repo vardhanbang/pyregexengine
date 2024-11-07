@@ -1,67 +1,57 @@
 from split_components import split_components
-from component import component
 
-def minimal_regex(comp_array, text):
-    comp_index = 0
-    slice_start = 0
-
+def internal_regex(expr, input_string):
+    lcomp_array = split_components(expr)
+    linput_string = input_string
     while True:
-        if comp_index == len(comp_array):
-            return True
-        #print(slice_start)
-        #print(comp_array[comp_index].repeat_range[1])
-        if slice_start >= len(text) and comp_array[comp_index].repeat_num > 0:
-            print(f'1 fail {comp_array[comp_index].expression}*{comp_array[comp_index].repeat_num}')
-            return False
-        if comp_array[comp_index].repeat_num > comp_array[comp_index].repeat_range[1]:
-            print(f'2 fail {comp_array[comp_index].expression}*{comp_array[comp_index].repeat_num}')
+        if not lcomp_array:
+            if linput_string:
+                return False
+            else:
+                return True
+            
+        if lcomp_array[0].verify(linput_string[:lcomp_array[0].repeat_num]):
+            if lcomp_array[0].repeat_range[1] == 10000:
+                min_len = 0
+                for comp in lcomp_array[1:]:
+                    min_len += comp.repeat_num
+                lcomp_array[0].repeat_range = (lcomp_array[0].repeat_range[0], len(linput_string) - min_len)
+            while lcomp_array[0].repeat_num <= lcomp_array[0].repeat_range[1]:
+                lcomp_array[0].repeat_num += 1
+                if lcomp_array[0].verify(linput_string[:lcomp_array[0].repeat_num]):
+                    continue
+                else:
+                    break
+            linput_string = linput_string[lcomp_array[0].repeat_num-1:]
+            lcomp_array.pop(0)
+        else:
             return False
         
-        expr_length = len(comp_array[comp_index].compare_list[0])
-        slice_length = expr_length*comp_array[comp_index].repeat_num
-
-        if slice_length > len(text[slice_start:]):
-            print(f'3 fail {comp_array[comp_index].expression}*{comp_array[comp_index].repeat_num}')
-            return False
-        if comp_array[comp_index].verify(text[slice_start:slice_start+slice_length]):
-            print(f'success {comp_array[comp_index].expression}*{comp_array[comp_index].repeat_num}')
-            slice_start += slice_length
-            comp_index += 1
-        else:
-            print(f'fail {comp_array[comp_index].expression}*{comp_array[comp_index].repeat_num}')
-            comp_index = max([0, comp_index - 1])
-            slice_start = max([0, slice_start - comp_array[comp_index].repeat_num*len(comp_array[comp_index].compare_list[0])])
-            comp_array[comp_index].repeat_num += 1
-
 def regex(expression, input_string):
     text = 'α' + input_string + 'β'
     comp_array = split_components(expression)
-    minr = comp_array[-1].repeat_range[0]
-    maxr = comp_array[-1].repeat_range[1]
     min_slice = 0
     for comp in comp_array:
-        min_slice += comp.repeat_num*len(comp.compare_list[0])
-    #print(f'min_slice: {min_slice}')
-    i, j = 0, 0
-    while i < len(text)-min_slice+1:
-        print(f'slice: {text[i:i+min_slice]}')
-        flag = False
-        if minimal_regex(comp_array, text[i:i+min_slice]):
-            flag = True
-            for r in range(1, maxr - minr + 1):
-                comp_array[-1].incr_r()
-                if i+min_slice+r > len(text):
-                    break
-                print(f'flag slice {text[i:i+min_slice+r]}')
-                if minimal_regex(comp_array, text[i:i+min_slice+r]):
-                    j = i+min_slice+r
-                else:
-                    break
-        if flag:
-            break
-        else:
-            comp_array = split_components(expression)
-            i += 1
+        min_slice += comp.repeat_num
+    #print(min_slice)
+    slices = []
+    for i in range(min_slice, len(text)+1):
+        for j in range(0, len(text)-i+1):
+            slices.append((j, j+i))
+    matched = []
+    for i,j in slices:
+        if internal_regex(expression, text[i:j]):
+            temp = 0
+            tempi = i
+            tempj = j
+            if comp_array[0].expression == '^':
+                tempi = 0
+            else:
+                tempi -= 1
+            if comp_array[-1].expression == '$':
+                tempj = len(text) - 2
+            else:
+                tempj -= 1
+            matched.append((tempi,tempj))
 
-        
-    return flag, i, j
+    return matched

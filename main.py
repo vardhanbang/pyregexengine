@@ -1,4 +1,4 @@
-from regex import regex
+from regex import regex, internal_regex
 from split_components import split_components
 
 '''
@@ -39,6 +39,6 @@ while True:
 comp = split_components('a*')[0]
 print(comp)
 comp.incr_r()
-print(comp)
+print(comp)`
 
 '''

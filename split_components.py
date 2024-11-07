@@ -39,7 +39,6 @@ def split_components(expr):
             operator = character
             repeat_range = operator_repeat_ranges[operator]
             index += 1
-
         elif character == '}':
             operator = 'custom'
 
@@ -64,7 +63,6 @@ def split_components(expr):
                 repeat_max = int(repeat_max)
             repeat_range = (repeat_min, repeat_max)
             index += 1
-
         else:
             operator = 'single'
             repeat_range = operator_repeat_ranges[operator]
