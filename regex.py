@@ -11,6 +11,7 @@ def internal_regex(expr, input_string):
                 return True
             
         if lcomp_array[0].verify(linput_string[:lcomp_array[0].repeat_num]):
+            #deal with maximal infinite operators
             if lcomp_array[0].repeat_range[1] == 10000:
                 min_len = 0
                 for comp in lcomp_array[1:]:
