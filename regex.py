@@ -1,4 +1,5 @@
 from split_components import split_components
+from component import component
 
 def minimal_regex(comp_array, text):
     comp_index = 0
@@ -33,6 +34,7 @@ def minimal_regex(comp_array, text):
             comp_array[comp_index].repeat_num += 1
 
 def regex(expression, input_string):
+    text = 'α' + input_string + 'β'
     comp_array = split_components(expression)
     minr = comp_array[-1].repeat_range[0]
     maxr = comp_array[-1].repeat_range[1]
@@ -41,17 +43,17 @@ def regex(expression, input_string):
         min_slice += comp.repeat_num*len(comp.compare_list[0])
     #print(f'min_slice: {min_slice}')
     i, j = 0, 0
-    while i < len(input_string)-min_slice+1:
-        print(f'slice: {input_string[i:i+min_slice]}')
+    while i < len(text)-min_slice+1:
+        print(f'slice: {text[i:i+min_slice]}')
         flag = False
-        if minimal_regex(comp_array, input_string[i:i+min_slice]):
+        if minimal_regex(comp_array, text[i:i+min_slice]):
             flag = True
             for r in range(1, maxr - minr + 1):
                 comp_array[-1].incr_r()
-                if i+min_slice+r > len(input_string):
+                if i+min_slice+r > len(text):
                     break
-                print(f'flag slice {input_string[i:i+min_slice+r]}')
-                if minimal_regex(comp_array, input_string[i:i+min_slice+r]):
+                print(f'flag slice {text[i:i+min_slice+r]}')
+                if minimal_regex(comp_array, text[i:i+min_slice+r]):
                     j = i+min_slice+r
                 else:
                     break

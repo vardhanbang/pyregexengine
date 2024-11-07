@@ -46,7 +46,11 @@ class component:
         return f"expression: {self.expression}\ncomponent type: {self.operator}\nrepeat_range: {self.repeat_range}\nrepeat_num {self.repeat_num}\ncompare_list: {self.compare_list}\n"
 
     def verify(self, text):
-        if self.expression == '.':
+        if self.expression == '^':
+            return text == 'α'
+        elif self.expression == '$':
+            return text == 'β'
+        elif self.expression == '.':
             return len(text) == self.repeat_num
         elif self.expression[0] == '[':
             if len(text) != self.repeat_num:
