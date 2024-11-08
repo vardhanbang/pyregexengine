@@ -1,5 +1,5 @@
 # PyRegexEngine
-A Regex Engine made with python, GUI with CustomTkinter.
+A Regex Engine made with python, GUI with CustomTkinter. Regex logic implemented from scratch.
 
 ### How to run
 1. Install packages using requirements.txt
