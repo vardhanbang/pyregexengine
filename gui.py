@@ -2,10 +2,15 @@ import customtkinter as ctk
 from regex import regex
 
 def check():
+    for child in outputFrame.winfo_children():
+        child.destroy()
+
     expression = regexField.get("1.0", "end-1c")
     if not expression:
         return
+    
     input_strings = inputField.get("1.0", "end-1c").split('\n')
+
     outputs = []
     for inp in input_strings:
         for i,j in regex(expression, inp):
@@ -23,6 +28,15 @@ def check():
     app.update_idletasks()
     print(input_strings)
     print(expression)
+
+def limit_to_one_line(event):
+    content = regexField.get("1.0", "end-1c")
+    if "\n" in content:
+        regexField.delete("1.0", "end")
+        regexField.insert("1.0", content.replace("\n", ""))
+
+def handle_event(event):
+    check()
 
 ctk.set_default_color_theme("green")
 
@@ -53,6 +67,8 @@ regexField.grid(row = 1,
     pady = (15,0), 
     sticky = 'ew'
 )
+regexField.bind('<KeyRelease>', limit_to_one_line)
+regexField.bind("<Return>", handle_event)
 
 checkButton = ctk.CTkButton(app, 
     text = 'Check', 

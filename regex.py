@@ -11,12 +11,16 @@ def internal_regex(expr, input_string):
                 return True
             
         if lcomp_array[0].verify(linput_string[:lcomp_array[0].repeat_num]):
-            #deal with maximal infinite operators
-            if lcomp_array[0].repeat_range[1] == 10000:
+            if (lcomp_array[0].repeat_range[1] == 10000) and (len(lcomp_array) != 1):
+                temp = lcomp_array[0].repeat_num
                 min_len = 0
-                for comp in lcomp_array[1:]:
-                    min_len += comp.repeat_num
-                lcomp_array[0].repeat_range = (lcomp_array[0].repeat_range[0], len(linput_string) - min_len)
+                for i in range(temp, len(input_string)-temp):
+                    if lcomp_array[1].verify(input_string[i:i+lcomp_array[1].repeat_num]):
+                        continue
+                    else:
+                        min_len = i-1
+                lcomp_array[0].repeat_range = (lcomp_array[0].repeat_range[0], min_len)
+                print(f"{lcomp_array[0].expression} new range {lcomp_array[0].repeat_range}")
             while lcomp_array[0].repeat_num <= lcomp_array[0].repeat_range[1]:
                 lcomp_array[0].repeat_num += 1
                 if lcomp_array[0].verify(linput_string[:lcomp_array[0].repeat_num]):

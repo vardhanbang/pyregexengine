@@ -22,7 +22,7 @@ comp = component('[@#b-fC-D5-8]', 'custom', (5,19))
 print(comp)
 print(comp.compare_list)
 '''
-
+'''
 expr = input('enter expression: ')
 comps = split_components(expr)
 for comp in comps:
@@ -32,7 +32,7 @@ for comp in comps:
 while True:
     temp = input('enter text: ')
     print(regex(expr, temp))
-
+'''
 
 '''
 
@@ -42,3 +42,5 @@ comp.incr_r()
 print(comp)`
 
 '''
+
+print(internal_regex('[a-z.]*[a-z]\.[a-z]{2,}', 'gmail.com'))
