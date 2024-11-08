@@ -4,6 +4,7 @@ A Regex Engine made with python, GUI with CustomTkinter.
 ### How to run
 1. Install packages using requirements.txt
 2. Run gui.py
+
 Note: Virtual environment recommended
 
 ### Supported features
