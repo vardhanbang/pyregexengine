@@ -55,4 +55,16 @@ def regex(expression, input_string):
                 tempj -= 1
             matched.append((tempi,tempj))
 
-    return matched
+    independent = []
+    if matched:
+        independent.append(matched[-1])
+        for a,b in matched[::-1]:
+            flag = True
+            for i,j in independent:
+                if (i<=a<=j) or (i<=b<=j):
+                    flag = False
+                    break
+            if flag:
+                independent.append((a,b))
+
+    return independent[::-1]

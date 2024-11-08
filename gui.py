@@ -1,7 +1,28 @@
 import customtkinter as ctk
+from regex import regex
 
 def check():
-    pass
+    expression = regexField.get("1.0", "end-1c")
+    if not expression:
+        return
+    input_strings = inputField.get("1.0", "end-1c").split('\n')
+    outputs = []
+    for inp in input_strings:
+        for i,j in regex(expression, inp):
+            outputs.append(inp[i:j])
+    for i, output in enumerate(outputs):
+        temp = ctk.CTkLabel(outputFrame,
+            font = ctk.CTkFont('roboto', 22),
+            justify = 'left',
+            text = output
+        )
+        temp.grid(row = i,
+            padx = 15,
+            sticky = 'w'
+        )
+    app.update_idletasks()
+    print(input_strings)
+    print(expression)
 
 ctk.set_default_color_theme("green")
 
@@ -92,21 +113,12 @@ inputField.grid(row = 1,
     sticky = 'nsew',
 )
 
-outputVar = ctk.StringVar()
-
-output = ctk.CTkLabel(frame, 
-    text=outputVar.get(), 
-    font = ctk.CTkFont('roboto', 25)
+outputFrame = ctk.CTkScrollableFrame(frame)
+outputFrame.grid(row = 1,
+    column = 1,
+    padx = 0,
+    pady = 15,
+    sticky = 'nsew'
 )
-output.grid(row = 1,
-    column = 1, 
-    padx = 15, 
-    pady = (15,0), 
-    sticky = 'nw',
-)
-
-
-
-
 
 app.mainloop()
