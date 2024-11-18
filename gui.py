@@ -108,7 +108,7 @@ inputLabel.grid(row = 0,
 )
 
 outputLabel = ctk.CTkLabel(frame, 
-    text="Matched subtrings", 
+    text="Matched substrings", 
     font = ctk.CTkFont('roboto', 25)
 )
 outputLabel.grid(row = 0,
